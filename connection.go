@@ -4,13 +4,13 @@ import (
 	"context"
 	"crypto/x509"
 	"errors"
-	"github.com/Noooste/fhttp/http2"
-	tls "github.com/Noooste/utls"
 	"net"
 	"net/url"
-	"strings"
 	"sync"
 	"time"
+
+	"github.com/Noooste/fhttp/http2"
+	tls "github.com/Noooste/utls"
 )
 
 const (
@@ -370,7 +370,10 @@ func (c *Conn) NewTLS(addr string) (err error) {
 		}
 	}
 
-	var hostname = strings.Split(addr, ":")[0]
+	hostname, _, err := net.SplitHostPort(addr)
+	if err != nil {
+		return errors.New("failed to split host and port: " + err.Error())
+	}
 
 	config := tls.Config{
 		ServerName:         hostname,
